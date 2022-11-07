@@ -58,7 +58,7 @@ def append_student_result(data, student_dir, student_scores, student_tasks):
 
 
 def dump_results_to_file(data):
-    with open("results.json", "w") as results_file_fd:
+    with open("test-results/results.json", "w") as results_file_fd:
         json.dump(data, results_file_fd)
 
 
