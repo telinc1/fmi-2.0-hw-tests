@@ -82,6 +82,8 @@ for task in $tasks; do
 	fi
 done
 
+echo "Check the Summary tab on the left to download the test results."
+
 python3 python-test.py "$test_dir" .
 
 exit $errors
