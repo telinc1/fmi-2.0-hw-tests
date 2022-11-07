@@ -12,7 +12,7 @@ if ! mkdir test-results; then
 	exit 101
 fi
 
-tasks="$(find "$test_dir" -mindepth 1 -maxdepth 1 -not -name '.*' -type d -printf '%f\n' | sort)"
+tasks="$(find "$test_dir/tests" -mindepth 1 -maxdepth 1 -not -name '.*' -type d -printf '%f\n' | sort)"
 
 errors=0
 report="test-results/report.txt"
@@ -37,24 +37,24 @@ for task in $tasks; do
 		echo >> $results
 		echo >> $results
 
-		tests_count=$(($(find "$test_dir/$task" | wc -l) / 2))
+		tests_count=$(($(find "$test_dir/tests/$task" | wc -l) / 2))
 
 		for test in $(seq 1 $tests_count); do
 			temp_file="$(mktemp)"
-			timeout 3 "./$task.exe" < "$test_dir/$task/${test}-in" &> "$temp_file"
+			timeout 3 "./$task.exe" < "$test_dir/tests/$task/${test}-in" &> "$temp_file"
 
-			if diff -Z "$temp_file" "$test_dir/$task/${test}-out" > /dev/null; then
+			if diff -Z "$temp_file" "$test_dir/tests/$task/${test}-out" > /dev/null; then
 				echo "Test \"${test}\": OK" >> $results
 				correct_tests=$((correct_tests+1))
 			else
 				echo "Test \"${test}\": Failed" >> $results
 
 				echo "Input:" >> $results
-				cat "$test_dir/$task/${test}-in" >> $results
+				cat "$test_dir/tests/$task/${test}-in" >> $results
 				echo >> $results
 
 				echo "Expected:" >> $results
-				cat "$test_dir/$task/${test}-out" >> $results
+				cat "$test_dir/tests/$task/${test}-out" >> $results
 				echo >> $results
 
 				echo "Actual:" >> $results
@@ -89,6 +89,6 @@ echo
 echo
 echo
 
-python3 "${test_dir}/python-test.py" "$test_dir" .
+python3 "${test_dir}/python-test.py" "$test_dir/tests" .
 
 exit $errors
