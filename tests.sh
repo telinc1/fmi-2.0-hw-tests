@@ -29,7 +29,7 @@ for task in $tasks; do
 
 	correct_tests=0
 	echo "Compiler output:" >> $results
-	g++ fn*_d1_$task.cpp -o "$task.out" -std=c++14 -Wpedantic &>> $results
+	g++ fn*_d1_$task.cpp -o "$task.exe" -std=c++14 -Wpedantic &>> $results
 
 	if [ $? -eq 0 ]; then
 		echo >> $results
@@ -41,7 +41,7 @@ for task in $tasks; do
 
 		for test in $(seq 1 $tests_count); do
 			temp_file="$(mktemp)"
-			timeout 3 "./$task.out" < "$test_dir/$task/${test}-in" &> "$temp_file"
+			timeout 3 "./$task.exe" < "$test_dir/$task/${test}-in" &> "$temp_file"
 
 			if diff -Z "$temp_file" "$test_dir/$task/${test}-out" > /dev/null; then
 				echo "Test \"${test}\": OK" >> $results
@@ -82,7 +82,6 @@ for task in $tasks; do
 	fi
 done
 
-
-
+python3 python-test.py "$test_dir" .
 
 exit $errors
